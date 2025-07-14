@@ -1,5 +1,6 @@
 <script>
   import { onMount, onDestroy } from 'svelte';
+
   // dynamically load html2canvas from CDN
   function ensureHtml2canvas() {
     if (typeof window === 'undefined') return Promise.resolve();
@@ -1332,14 +1333,17 @@ class Button extends Container {
 }
 
 
+
   let { children, text = 'Button', size = '48', type = 'rounded', onClick, ...rest } = $props();
 
   let host;
   let instance;
 
+
   onMount(async () => {
     await ensureHtml2canvas();
     instance = new Button({ text, size, type, onClick, ...rest });
+
     if (host) {
       host.appendChild(instance.element);
       // move any rendered child nodes inside the button element
@@ -1358,6 +1362,7 @@ class Button extends Container {
 <div bind:this={host}>
   {@render children?.()}
 </div>
+
 
 <style>
   .glass-container {
@@ -1411,4 +1416,3 @@ class Button extends Container {
     font-family: system-ui, -apple-system, sans-serif;
     white-space: nowrap;
   }
-</style>

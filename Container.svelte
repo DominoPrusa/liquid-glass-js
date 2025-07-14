@@ -1,5 +1,6 @@
 <script>
   import { onMount, onDestroy } from 'svelte';
+
   // dynamically inject html2canvas from CDN so the component works standalone
   function ensureHtml2canvas() {
     if (typeof window === 'undefined') return Promise.resolve();
@@ -755,3 +756,4 @@
     flex-grow: 0;
   }
 </style>
+
