@@ -1,4 +1,20 @@
-class Container {
+<script>
+  import { onMount, onDestroy } from 'svelte';
+  // dynamically inject html2canvas from CDN so the component works standalone
+  function ensureHtml2canvas() {
+    if (typeof window === 'undefined') return Promise.resolve();
+    if (window.html2canvas) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+      script.onload = () => resolve();
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+
+  // Container class implementation copied from container.js
+  class Container {
   static instances = []
   static pageSnapshot = null
   static isCapturing = false
@@ -688,8 +704,54 @@ class Container {
       console.error('Shader compile error:', gl.getShaderInfoLog(shader))
       return null
     }
-  return shader
+    return shader
   }
 }
 
-export default Container
+  let { children, ...options } = $props();
+  let host;
+  let instance;
+
+  onMount(async () => {
+    await ensureHtml2canvas();
+    instance = new Container(options);
+    if (host) {
+      host.appendChild(instance.element);
+      const nodes = Array.from(host.childNodes).filter(n => n !== instance.element);
+      nodes.forEach(n => instance.element.appendChild(n));
+    }
+  });
+
+  onDestroy(() => {
+    if (instance && instance.element && instance.element.parentNode) {
+      instance.element.parentNode.removeChild(instance.element);
+    }
+  });
+</script>
+
+<div bind:this={host}>
+  {@render children?.()}
+</div>
+
+<style>
+  .glass-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .glass-container-circle {
+    aspect-ratio: 1 / 1;
+    flex-shrink: 0;
+    flex-grow: 0;
+  }
+
+  .glass-container-pill {
+    flex-shrink: 0;
+    flex-grow: 0;
+  }
+</style>
