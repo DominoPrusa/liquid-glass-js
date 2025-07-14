@@ -34,8 +34,8 @@ class Container {
       this.element.appendChild(child.element)
     }
 
-    // If child is a button, set up nested glass
-    if (child instanceof Button) {
+    // If child has nested glass behavior, set it up
+    if (typeof child.setupAsNestedGlass === 'function') {
       child.setupAsNestedGlass()
     }
 
@@ -105,7 +105,7 @@ class Container {
 
         // Update any nested glass children when container size changes
         this.children.forEach(child => {
-          if (child instanceof Button && child.isNestedGlass && child.gl_refs.gl) {
+          if (child.isNestedGlass && child.gl_refs && child.gl_refs.gl) {
             const gl = child.gl_refs.gl
 
             // Update child's texture to match new container size
@@ -688,6 +688,8 @@ class Container {
       console.error('Shader compile error:', gl.getShaderInfoLog(shader))
       return null
     }
-    return shader
+  return shader
   }
 }
+
+export default Container

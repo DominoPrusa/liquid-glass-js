@@ -1,3 +1,5 @@
+import Container from './container.js'
+
 class Button extends Container {
   constructor(options = {}) {
     const text = options.text || 'Button'
@@ -617,6 +619,8 @@ class Button extends Container {
     animationLoop()
 
     // Store render function for external calls
-    this.render = render
+  this.render = render
   }
 }
+
+export default Button
